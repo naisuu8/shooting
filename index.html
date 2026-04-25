@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sniper Shooting Game</title>
+  <style>
+    canvas { background: #87CEEB; display: block; margin: auto; }
+    body { text-align: center; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+<h2>Sniper Shooting Game</h2>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let crosshairX = 300, crosshairY = 200;
+let score = 0;
+let target = {x: 100, y: 100, size: 80};
+
+// Load your photo as the target
+const targetImg = new Image();
+targetImg.src = "target.png"; // rename your uploaded photo to target.png
+
+document.addEventListener("keydown", moveCrosshair);
+document.addEventListener("keydown", shoot);
+
+function moveCrosshair(e) {
+  if (e.key === "ArrowLeft") crosshairX -= 20;
+  if (e.key === "ArrowRight") crosshairX += 20;
+  if (e.key === "ArrowUp") crosshairY -= 20;
+  if (e.key === "ArrowDown") crosshairY += 20;
+}
+
+function shoot(e) {
+  if (e.key === " ") {
+    if (crosshairX > target.x && crosshairX < target.x + target.size &&
+        crosshairY > target.y && crosshairY < target.y + target.size) {
+      score++;
+      // Move target to random new position
+      target.x = Math.random() * (canvas.width - target.size);
+      target.y = Math.random() * (canvas.height - target.size);
+    }
+  }
+}
+
+function drawCrosshair() {
+  ctx.strokeStyle = "black";
+  ctx.beginPath();
+  ctx.moveTo(crosshairX-20, crosshairY);
+  ctx.lineTo(crosshairX+20, crosshairY);
+  ctx.moveTo(crosshairX, crosshairY-20);
+  ctx.lineTo(crosshairX, crosshairY+20);
+  ctx.stroke();
+}
+
+function drawTarget() {
+  ctx.drawImage(targetImg, target.x, target.y, target.size, target.size);
+}
+
+function gameLoop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawCrosshair();
+  drawTarget();
+
+  ctx.fillStyle = "black";
+  ctx.font = "20px Arial";
+  ctx.fillText("Score: " + score, 10, 20);
+
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
+</script>
+</body>
+</html>
