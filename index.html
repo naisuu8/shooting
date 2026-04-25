@@ -1,15 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Sniper Shooting Game</title>
-  <style>
-    canvas { background: #87CEEB; display: block; margin: auto; }
-    body { text-align: center; font-family: sans-serif; }
-  </style>
-</head>
-<body>
-<h2>Sniper Shooting Game</h2>
-<canvas id="gameCanvas" width="600" height="400"></canvas>
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -22,28 +10,34 @@ let target = {x: 100, y: 100, size: 80};
 const targetImg = new Image();
 targetImg.src = "target.png"; // rename your uploaded photo to target.png
 
-document.addEventListener("keydown", moveCrosshair);
-document.addEventListener("keydown", shoot);
+// --- Keyboard aiming ---
+document.addEventListener("keydown", function(e) {
+  if (e.key === "ArrowLeft") crosshairX -= 10;
+  if (e.key === "ArrowRight") crosshairX += 10;
+  if (e.key === "ArrowUp") crosshairY -= 10;
+  if (e.key === "ArrowDown") crosshairY += 10;
+  if (e.key === " ") shoot();
+});
 
-function moveCrosshair(e) {
-  if (e.key === "ArrowLeft") crosshairX -= 20;
-  if (e.key === "ArrowRight") crosshairX += 20;
-  if (e.key === "ArrowUp") crosshairY -= 20;
-  if (e.key === "ArrowDown") crosshairY += 20;
-}
+// --- Mouse aiming ---
+canvas.addEventListener("mousemove", function(e) {
+  const rect = canvas.getBoundingClientRect();
+  crosshairX = e.clientX - rect.left;
+  crosshairY = e.clientY - rect.top;
+});
 
-function shoot(e) {
-  if (e.key === " ") {
-    if (crosshairX > target.x && crosshairX < target.x + target.size &&
-        crosshairY > target.y && crosshairY < target.y + target.size) {
-      score++;
-      // Move target to random new position
-      target.x = Math.random() * (canvas.width - target.size);
-      target.y = Math.random() * (canvas.height - target.size);
-    }
+// --- Shooting ---
+function shoot() {
+  if (crosshairX > target.x && crosshairX < target.x + target.size &&
+      crosshairY > target.y && crosshairY < target.y + target.size) {
+    score++;
+    // Move target to random new position
+    target.x = Math.random() * (canvas.width - target.size);
+    target.y = Math.random() * (canvas.height - target.size);
   }
 }
 
+// --- Drawing ---
 function drawCrosshair() {
   ctx.strokeStyle = "black";
   ctx.beginPath();
@@ -71,5 +65,3 @@ function gameLoop() {
 }
 gameLoop();
 </script>
-</body>
-</html>
